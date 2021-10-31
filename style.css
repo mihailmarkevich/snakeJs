@@ -1,0 +1,100 @@
+* {
+    margin: 0 auto;
+    padding: 0;
+}
+
+body{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #292929;
+}
+
+#map{
+    position: relative;
+    top: 75px;
+    width: 800px;
+    height: 800px;
+    background: #9dcd72;
+}
+
+#snake-head{
+    z-index: 1;
+}
+#snake-head img{
+    width: 50px;position: relative;
+}
+#snake-head.direction-left img{
+    left: -20px;
+    top: -15px;
+    transform: rotate(90deg);
+}
+#snake-head.direction-up img {
+    left: -15px;
+    top: -21px;
+    transform: rotate(180deg);
+}
+#snake-head.direction-right img{
+    left: -10px;
+    top: -15px;
+    transform: rotate(-90deg);
+}
+#snake-head.direction-down img{
+    left: -15px;
+    top: -10px;
+    transform: rotate(0deg);
+}
+.snake{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #aec948;
+    box-shadow: 0px 0px 6px -2px rgb(0 0 0 / 75%);
+}
+
+#apple{
+    position: absolute;
+    font-size: 28px;
+    width: 40px;
+    height: 40px;
+}
+
+.modal{
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+.modal .dialog{
+    display: block;
+    margin: 0 auto;
+    width: 350px;
+    height: auto;
+    padding: 15px;
+    z-index: 2;
+    background: white;
+    border-radius: 2px;
+    text-align: center;
+    top: 300px;
+    position: relative;
+}
+.modal .score{
+    font-size: 21px;
+}
+.modal button{
+    padding: 10px 20px;
+    font-size: 18px;
+}
+.modal .fade{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    opacity: 0.3;
+    z-index: 1;
+}

@@ -1,30 +1,27 @@
-const map = document.getElementById('map');
-const mapWidth = map.offsetWidth;
-const mapHeight = map.offsetHeight;
-
-const snakeWidth = 20;
-const snakeHeight = 20;
-
-const appleWidth = 40;
-const appleHeight = 40;
-
-var direction = 'left';
+var map;
+const mapWidth = 800;
+const mapHeight = 800;
 
 var snake = [];
+const snakeWidth = 20;
+const snakeHeight = 20;
 var snakeMoving;
+var direction = 'left';
 
 var apple = {
     x: 0,
     y: 0,
 };
-
-var teleport = false;
+const appleWidth = 40;
+const appleHeight = 40;
 
 var score = 0;
 
+initMap();
+
 gameStart();
 
-function gameStart() {
+function gameStart(){
     score = 0;
 
     direction = 'left';
@@ -32,182 +29,160 @@ function gameStart() {
     document.getElementById('game-over-modal').style.display = 'none';
 
     document.addEventListener('keyup', function (e) {
-        if (e.code == 'ArrowLeft' && direction != 'right'){
+        if (e.code == 'ArrowLeft' && direction != 'right') {
             direction = 'left';
-        }
-        if (e.code == 'ArrowUp' && direction != 'down'){
+        } else if (e.code == 'ArrowUp' && direction != 'down') {
             direction = 'up';
-        }
-        if (e.code == 'ArrowRight' && direction != 'left'){
-            direction ='right';
-        }
-        if (e.code == 'ArrowDown' && direction != 'up'){
+        } else if (e.code == 'ArrowRight' && direction != 'left') {
+            direction = 'right';
+        } else if (e.code == 'ArrowDown' && direction != 'up') {
             direction = 'down';
         }
     });
 
-    initApple();
-
     initSnake();
+
+    initApple();
 }
 
-function gameOver() {
-    clearInterval(snakeMoving);
-    document.getElementById('game-over-modal').style.display = 'block';
-    document.getElementById('score').innerText = score;
-
-    document.querySelectorAll('.snake').forEach(e => e.remove());
-    snake = [];
+function initMap() {
+    map = document.createElement('div');
+    map.setAttribute('id', 'map');
+    map.style.width = mapWidth + 'px';
+    map.style.height = mapHeight + 'px';
+    document.body.appendChild(map);
 }
 
 function initSnake() {
     var startX = mapWidth / 2;
     var startY = mapHeight / 2;
 
-    for (var i = 0; i < 3; i++){
+    for (i = 0; i < 3; i++){
         var xPos = startX + snakeWidth * i;
         var yPos = startY;
 
-        snake[i] = {
+        snake.push({
             x: xPos,
             y: yPos,
-            direction: direction,
-        };
+            direction: 'left',
+        });
 
-        createSnakeTale(i);
+        var snakeHtml = document.createElement('div');
+        snakeHtml.classList.add('snake');
+        if (i == 0){
+            snakeHtml.setAttribute('id', 'snake-head');
+            snakeHtml.classList.add('direction-' + direction);
+            var image = document.createElement('img');
+            image.setAttribute('src', 'snake-head.png');
+            snakeHtml.appendChild(image);
+        }
+        snakeHtml.style.left = xPos + 'px';
+        snakeHtml.style.top = yPos + 'px';
+        map.appendChild(snakeHtml);
     }
 
     moveSnake();
 }
 
-function createSnakeTale(index) {
-    var snakeHTML = document.createElement('div');
-    if (index == 0){
-        snakeHTML.setAttribute('id', 'snake-head');
-        snakeHTML.classList.add('direction-' + direction);
-        var img = document.createElement('img');
-        img.setAttribute('src', 'snake-head.png');
-        snakeHTML.appendChild(img);
-    }
-    snakeHTML.classList.add('snake');
-    snakeHTML.style.left = snake[index]['x'] + 'px';
-    snakeHTML.style.top = snake[index]['y'] + 'px';
-    map.appendChild(snakeHTML);
-}
-
 function moveSnake() {
-    snakeMoving = setInterval(function () {
-        // Move Head
+    snakeMoving = setInterval(function(){
+        //Move Head
         var prevX = snake[0]['x'];
         var prevY = snake[0]['y'];
         var prevDirection = snake[0]['direction'];
 
-        //Is snake crushed
-        for (index in snake){
-            if (index > 0) {
-                if (direction == 'left' && prevX == (parseFloat(snake[index]['x']) + parseFloat(snakeWidth)) && prevY == snake[index]['y']) {
-                    gameOver();
-                    return;
-                } else if (direction == 'up' && prevX == snake[index]['x'] && prevY == (parseFloat(snake[index]['y']) + parseFloat(snakeHeight))) {
-                    gameOver();
-                    return;
-                } else if (direction == 'right' && (parseFloat(prevX) + parseFloat(snakeWidth)) == snake[index]['x'] && prevY == snake[index]['y']){
-                    gameOver();
-                    return;
-                } else if (direction == 'down' && prevX == snake[index]['x'] && (parseFloat(prevY) + parseFloat(snakeWidth)) == snake[index]['y']){
-                    gameOver();
-                    return;
-                }
+        snake[0]['direction'] = direction;
+
+        if (direction == 'left'){
+            if (snake[0]['x'] <= 0){
+                snake[0]['x'] = parseInt(mapWidth) - parseInt(snakeWidth);
+            } else {
+                snake[0]['x'] -= snakeWidth;
+            }
+        } else if (direction == 'up'){
+            if (snake[0]['y'] <= 0){
+                snake[0]['y'] = parseInt(mapHeight) - parseInt(snakeHeight);
+            } else {
+                snake[0]['y'] -= snakeHeight;
+            }
+        } else if (direction == 'right'){
+            if ((parseInt(snake[0]['x'] + parseInt(snakeWidth))) >= mapWidth){
+                snake[0]['x'] = 0;
+            } else {
+                snake[0]['x'] += snakeWidth;
+            }
+        } else if (direction == 'down'){
+            if ((parseInt(snake[0]['y']) + parseInt(snakeHeight)) >= mapHeight){
+                snake[0]['y'] = 0;
+            } else {
+                snake[0]['y'] += snakeHeight;
             }
         }
 
-        if (snake) {
-            snake[0]['direction'] = direction;
+        if (isGameOver()){
+            gameOver();
+        }
 
-            if (snake[0]['x'] <= 0 && !teleport) {
-                snake[0]['x'] = parseFloat(mapWidth) - parseFloat(snakeWidth);
-                teleport = true;
-            } else if ((parseFloat(snake[0]['x'] + parseFloat(snakeWidth))) >= mapWidth && !teleport) {
-                snake[0]['x'] = 0;
-                teleport = true;
-            } else if (snake[0]['y'] <= 0 && !teleport) {
-                snake[0]['y'] = parseFloat(mapHeight) - parseFloat(snakeHeight);
-                teleport = true;
-            } else if ((parseFloat(snake[0]['y']) + parseFloat(snakeHeight)) >= mapWidth && !teleport) {
-                snake[0]['y'] = 0;
-                teleport = true;
-            } else if (direction == 'left') {
-                snake[0]['x'] -= snakeWidth;
-                teleport = false;
-            } else if (direction == 'up') {
-                snake[0]['y'] -= snakeHeight;
-                teleport = false;
-            } else if (direction == 'right') {
-                snake[0]['x'] += snakeWidth;
-                teleport = false;
-            } else if (direction == 'down') {
-                snake[0]['y'] += snakeHeight;
-                teleport = false;
+        var elem = document.getElementsByClassName('snake')[0];
+        elem.style.left = snake[0]['x'] + 'px';
+        elem.style.top = snake[0]['y'] + 'px';
+        elem.setAttribute('class', 'snake direction-' + direction);
+
+        //Eat apple
+        if (
+            (snake[0]['x'] >= apple['x'] && (parseInt(apple['x']) + parseInt(appleWidth)) >= snake[0]['x'])
+             &&
+            (snake[0]['y'] >= apple['y'] && (parseInt(apple['y']) + parseInt(appleHeight)) >= snake[0]['y'])
+        ) {
+            eatApple();
+        }
+
+        //Move Body
+        for (key in snake){
+            if (key > 0){
+                var xPos = prevX;
+                var yPos = prevY;
+                var newDirection = prevDirection;
+
+                prevX = snake[key]['x'];
+                prevY = snake[key]['y'];
+                prevDirection = snake[key]['direction'];
+
+                snake[key]['x'] = xPos;
+                snake[key]['y'] = yPos;
+                snake[key]['direction'] = newDirection;
+
+                var elem = document.getElementsByClassName('snake')[key];
+                elem.style.left = snake[key]['x'] + 'px';
+                elem.style.top = snake[key]['y'] + 'px';
             }
-
-            var elem = document.getElementsByClassName('snake')[0];
-            elem.setAttribute('class', 'snake direction-' + direction);
-            elem.style.left = snake[0]['x'] + 'px';
-            elem.style.top = snake[0]['y'] + 'px';
-
-            //Move Body
-            for (key in snake) {
-                if (key > 0) {
-                    var xPos = prevX;
-                    var yPos = prevY;
-                    var newWirection = prevDirection;
-
-                    prevX = snake[key]['x'];
-                    prevY = snake[key]['y'];
-                    prevDirection = snake[key]['direction'];
-
-                    snake[key]['x'] = xPos;
-                    snake[key]['y'] = yPos;
-                    snake[key]['direction'] = newWirection;
-
-                    var elem = document.getElementsByClassName('snake')[key];
-                    elem.style.left = xPos + 'px';
-                    elem.style.top = yPos + 'px';
-                }
-            }
-
-            //Detect eat apple
-            if (
-                (apple['x'] <= snake[0]['x'] && (parseFloat(apple['x']) + parseFloat(appleWidth)) >= snake[0]['x'])
-                &&
-                (apple['y'] <= snake[0]['y'] && (parseFloat(apple['y']) + parseFloat(appleHeight)) >= snake[0]['y'])
-            ) {
-                eatApple();
-            }
-
         }
 
     }, 100);
 }
 
 function initApple(){
-    var coordXMin = 0;
-    var coordXMax = mapWidth - appleWidth;
-    apple['x'] = rand(coordXMin, coordXMax);
+    var coordXMax = parseInt(mapWidth) - parseInt(appleWidth);
+    apple['x'] = rand(0, coordXMax);
 
-    var coordYMin = 0;
-    var coordYMax = mapHeight - appleHeight;
-    apple['y'] = rand(coordYMin, coordYMax);
+    var coordYMax = parseInt(mapHeight) - parseInt(appleHeight);
+    apple['y'] = rand(0, coordYMax);
 
-    var appleHtml = document.getElementById('apple');
-    if (!appleHtml){
-        appleHtml = document.createElement('img');
-        appleHtml.setAttribute('id', 'apple');
-        appleHtml.setAttribute('src', 'apple.png');
+    var elem = document.getElementById('apple');
+    if (!elem) {
+        elem = document.createElement('img');
+        elem.setAttribute('id', 'apple');
+        elem.setAttribute('src', 'apple.png');
+        elem.style.width = appleWidth + 'px';
+        elem.style.height = appleHeight + 'px';
+        map.appendChild(elem);
     }
-    appleHtml.style.left = apple['x'] + 'px';
-    appleHtml.style.top = apple['y'] + 'px';
-    map.appendChild(appleHtml);
+    elem.style.left = apple['x'] + 'px';
+    elem.style.top = apple['y'] + 'px';
+}
+
+function rand(min, max) {
+    return Math.round(Math.random() * (max - min) + min);
 }
 
 function eatApple() {
@@ -216,20 +191,20 @@ function eatApple() {
     increaseSnake();
 }
 
-function increaseSnake(){
+function increaseSnake() {
     var lastTale = snake[snake.length - 1];
 
-    var xPos = lastTale.x;
-    var yPos = lastTale.y;
-    var taleDirection = lastTale.direction;
+    var xPos = lastTale['x'];
+    var yPos = lastTale['y'];
+    var taleDirection = lastTale['direction'];
 
-    if (direction == 'left') {
+    if (taleDirection == 'left'){
         xPos += snakeWidth;
-    } else if (direction == 'up'){
+    } else if (taleDirection == 'up'){
         yPos += snakeHeight;
-    } else if (direction == 'right'){
+    } else if (taleDirection == 'right'){
         xPos -= snakeWidth;
-    } else if (direction == 'down'){
+    } else if (taleDirection == 'down'){
         yPos -= snakeHeight;
     }
 
@@ -239,10 +214,32 @@ function increaseSnake(){
         direction: taleDirection,
     });
 
-    createSnakeTale(snake.length - 1);
+    var elem = document.createElement('div');
+    elem.classList.add('snake');
+    elem.style.left = xPos + 'px';
+    elem.style.top = yPos + 'px';
+    map.appendChild(elem);
 }
 
+function isGameOver(){
+    for (index in snake){
+        if (index > 0){
+            if (snake[0]['x'] == snake[index]['x'] && snake[0]['y'] == snake[index]['y']){
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
-function rand(min, max) {
-    return Math.round(Math.random() * (max - min) + min);
+function gameOver() {
+    clearInterval(snakeMoving);
+
+    setTimeout(function () {
+        document.getElementById('game-over-modal').style.display = 'block';
+        document.getElementById('score').innerText = score;
+
+        document.querySelectorAll('.snake').forEach(e => e.remove());
+        snake = [];
+    }, 500);
 }

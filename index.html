@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Snake</title>
-        <link rel="stylesheet" href="style.css" />
-    </head>
-    <body>
-        <div id="map"></div>
-
-        <div id="game-over-modal" class="modal">
-            <div class="dialog">
-                <div class="score">
-                    Your Score: <b id="score">1000</b>
-                </div>
-                <br>
-                <button onclick="gameStart()">Play again</button>
+<head>
+    <title>Snake</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div id="game-over-modal" class="modal">
+        <div class="dialog">
+            <div class="score">
+                Your score: <b id="score"></b>
             </div>
-            <div class="fade"></div>
+            <br/>
+            <button onclick="gameStart();">Play Again</button>
         </div>
-
-        <script type="text/javascript" src="index.js"></script>
-    </body>
+        <div class="fade"></div>
+    </div>
+    <script type="text/javascript" src="index.js"></script>
+</body>
 </html>

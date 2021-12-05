@@ -3,49 +3,53 @@
     padding: 0;
 }
 
-body{
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
+body {
     background: #292929;
 }
 
-#map{
+#map {
+    z-index: 1;
     position: relative;
     top: 75px;
-    width: 800px;
-    height: 800px;
     background: #9dcd72;
 }
 
+#apple{
+    position: absolute;
+}
+
 #snake-head{
-    z-index: 1;
+    z-index: 2;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 #snake-head img{
-    width: 50px;position: relative;
+    position: relative;
+    width: 50px;
 }
-#snake-head.direction-left img{
+.direction-left img{
     left: -20px;
     top: -15px;
     transform: rotate(90deg);
 }
-#snake-head.direction-up img {
-    left: -15px;
-    top: -21px;
+.direction-up img{
     transform: rotate(180deg);
+    left: -15px;
+    top: -20px;
 }
-#snake-head.direction-right img{
-    left: -10px;
+.direction-right img{
+    transform: rotate(270deg);
+    left: -11px;
     top: -15px;
-    transform: rotate(-90deg);
 }
-#snake-head.direction-down img{
+.direction-down img{
+    transform: rotate(0deg);
     left: -15px;
     top: -10px;
-    transform: rotate(0deg);
 }
+
 .snake{
+    z-index: 1;
     position: absolute;
     width: 20px;
     height: 20px;
@@ -53,14 +57,8 @@ body{
     box-shadow: 0px 0px 6px -2px rgb(0 0 0 / 75%);
 }
 
-#apple{
-    position: absolute;
-    font-size: 28px;
-    width: 40px;
-    height: 40px;
-}
-
 .modal{
+    z-index: 2;
     display: none;
     position: fixed;
     left: 0;
@@ -68,27 +66,9 @@ body{
     width: 100%;
     height: 100%;
 }
-.modal .dialog{
-    display: block;
-    margin: 0 auto;
-    width: 350px;
-    height: auto;
-    padding: 15px;
-    z-index: 2;
-    background: white;
-    border-radius: 2px;
-    text-align: center;
-    top: 300px;
-    position: relative;
-}
-.modal .score{
-    font-size: 21px;
-}
-.modal button{
-    padding: 10px 20px;
-    font-size: 18px;
-}
-.modal .fade{
+
+.fade {
+    z-index: 1;
     position: absolute;
     left: 0;
     top: 0;
@@ -96,5 +76,24 @@ body{
     height: 100%;
     background: black;
     opacity: 0.3;
-    z-index: 1;
+}
+
+.dialog {
+    z-index: 2;
+    margin: 0 auto;
+    position: relative;
+    width: 350px;
+    background: white;
+    top: 300px;
+    text-align: center;
+    padding: 15px;
+    border-radius: 3px;
+}
+
+.dialog .score{
+    font-size: 21px;
+}
+.dialog button{
+    font-size: 18px;
+    padding: 5px;
 }
